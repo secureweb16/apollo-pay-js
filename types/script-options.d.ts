@@ -25,15 +25,16 @@ interface ApolloPayOrderAttributes {
   ap_callback_url: string;
   ap_order_sub_total: number;
   ap_order_total: number;
-  ap_timestamp: string;
+  // ap_timestamp: string;
   ap_order_id: number;
-  ap_mct: string;
+  // ap_mct: string;
   ap_order_email: string;
   ap_currency: string;
   ap_currency_symbol: string;
   ap_shipping_total: number;
   ap_tax_total: number;
-  ap_products?: ApolloPayProductAttributes[];
+  // ap_products?: ApolloPayProductAttributes[];
+  ap_products: string;
 }
 
 export {

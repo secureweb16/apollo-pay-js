@@ -1,71 +1,213 @@
-import PolyPromise, { reject, resolve } from "promise-polyfill";
-
+// import PolyPromise, { reject, resolve } from "promise-polyfill";
 import {
   ApolloPayCredentials,
   ApolloPayOrderAttributes,
 } from "../types/script-options";
 import { call } from "./utils";
-const SDKBaseURL = "http://35.183.204.94/api/";
+// import * as crypto from "crypto";
+// import * as cr from "crypto-browserify";
+import moment from "moment";
 
-async function validateCredentials(credentials: ApolloPayCredentials) {
-  validateArguments(credentials);
-  const url = `${SDKBaseURL}/store/validate/api-key`;
+import hmacSHA512 from "crypto-js/hmac-sha512";
+import Hex from "crypto-js/enc-hex";
 
-  return new PolyPromise(async (resolve, reject) => {
-    try {
-      const result = await call({
-        url,
-        method: "post",
-        data: {
-          apikey: credentials.api_key,
-          merchantid: credentials.merchant_key,
-        },
-      });
-      resolve(result);
-    } catch (error) {
-      reject(error);
-    }
-  });
-}
+// const SDKBaseURL = "http://35.183.204.94/api";
+const SDKBaseURL = "http://localhost:3007/api";
 
-async function processCheckout(params: ApolloPayOrderAttributes) {
-  const url = `${SDKBaseURL}/checkout/hosted/apollopay`;
+export class LoadScript {
+  constructor(protected credentials: ApolloPayCredentials) {}
+  async validateCredentials(
+    PromisePonyfill: PromiseConstructor = this.getDefaultPromiseImplementation()
+  ) {
+    if (typeof document === "undefined") return PromisePonyfill.resolve(null);
+    this.validateArguments(this.credentials);
+    const url = `${SDKBaseURL}/store/validate/api-key`;
 
-  return new PolyPromise(async (resolve, reject) => {
-    try {
-      const result = await call({
-        url,
-        method: "post",
-        data: params,
-      });
-      resolve(result);
-    } catch (error) {
-      reject(error);
-    }
-  });
-}
+    console.log("type here in the package: ", this.credentials);
 
-function validateArguments(params: unknown) {
-  if (typeof params !== "object" || params === null) {
-    throw new Error("Expected an Object");
+    return new PromisePonyfill(async (resolve, reject) => {
+      try {
+        const result = await call({
+          url,
+          method: "post",
+          data: JSON.stringify({
+            apikey: this.credentials.api_key,
+            merchantid: this.credentials.merchant_key,
+          }),
+        });
+
+        // if (result.data.success === true) resolve(result.data);
+        // else reject(result.data);
+
+        resolve(result);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+  async processCheckout(
+    params: ApolloPayOrderAttributes,
+    PromisePonyfill: PromiseConstructor = this.getDefaultPromiseImplementation()
+  ) {
+    if (typeof document === "undefined") return PromisePonyfill.resolve(null);
+    const post_url = `${SDKBaseURL}/checkout/hosted/apollopay`;
+
+    // console.log("this.credentials:", this.credentials);
+
+    return new PromisePonyfill(async (resolve, reject) => {
+      try {
+        const timestamp = moment().format();
+
+        const ap_hash = this.generateHMAC(
+          params.ap_order_id,
+          params.ap_order_total,
+          timestamp
+        );
+
+        const ap_shipping_total = 0;
+        const ap_tax_total = 0;
+        //Create Form
+        const formElement = document.createElement("form");
+        formElement.setAttribute("method", "post");
+        formElement.setAttribute("action", post_url);
+        //Create Fields
+        //ap_type
+        const apType = document.createElement("input");
+        apType.setAttribute("type", "hidden");
+        apType.setAttribute("name", "ap_type");
+        apType.setAttribute("value", "WooCommerce");
+        //ap_callback_url
+        const apCallbackURL = document.createElement("input");
+        apCallbackURL.setAttribute("type", "hidden");
+        apCallbackURL.setAttribute("name", "ap_callback_url");
+        apCallbackURL.setAttribute("value", "http://example.com/callback");
+        //ap_order_sub_total
+        const apOrderSubTotal = document.createElement("input");
+        apOrderSubTotal.setAttribute("type", "hidden");
+        apOrderSubTotal.setAttribute("name", "ap_order_sub_total");
+        apOrderSubTotal.setAttribute("value", `${params.ap_order_sub_total}`);
+        //ap_order_total
+        const apOrderTotal = document.createElement("input");
+        apOrderTotal.setAttribute("type", "hidden");
+        apOrderTotal.setAttribute("name", "ap_order_total");
+        apOrderTotal.setAttribute("value", `${params.ap_order_total}`);
+        //ap_timestamp
+        const apTimestamp = document.createElement("input");
+        apTimestamp.setAttribute("type", "hidden");
+        apTimestamp.setAttribute("name", "ap_timestamp");
+        apTimestamp.setAttribute("value", `${timestamp}`);
+        //ap_order_id
+        const apOrderID = document.createElement("input");
+        apOrderID.setAttribute("type", "hidden");
+        apOrderID.setAttribute("name", "ap_order_id");
+        apOrderID.setAttribute("value", `${params.ap_order_id}`);
+        //ap_mct
+        const apMCT = document.createElement("input");
+        apMCT.setAttribute("type", "hidden");
+        apMCT.setAttribute("name", "ap_mct");
+        apMCT.setAttribute("value", `${this.credentials.merchant_key}`);
+        //ap_hash
+        const apHash = document.createElement("input");
+        apHash.setAttribute("type", "hidden");
+        apHash.setAttribute("name", "ap_hash");
+        apHash.setAttribute("value", `${ap_hash}`);
+        //ap_order_email
+        const apOrderEmail = document.createElement("input");
+        apOrderEmail.setAttribute("type", "hidden");
+        apOrderEmail.setAttribute("name", "ap_order_email");
+        apOrderEmail.setAttribute("value", `${params.ap_order_email}`);
+        //ap_currency
+        const apCurrency = document.createElement("input");
+        apCurrency.setAttribute("type", "hidden");
+        apCurrency.setAttribute("name", "ap_currency");
+        apCurrency.setAttribute("value", `${params.ap_currency}`);
+        //ap_currency_symbol
+        const apCurrencySymbol = document.createElement("input");
+        apCurrencySymbol.setAttribute("type", "hidden");
+        apCurrencySymbol.setAttribute("name", "ap_currency_symbol");
+        apCurrencySymbol.setAttribute("value", `${params.ap_currency_symbol}`);
+        //ap_shipping_total
+        const apShippingTotal = document.createElement("input");
+        apShippingTotal.setAttribute("type", "hidden");
+        apShippingTotal.setAttribute("name", "ap_shipping_total");
+        apShippingTotal.setAttribute("value", `${ap_shipping_total}`);
+        //ap_tax_total
+        const apTaxTotal = document.createElement("input");
+        apTaxTotal.setAttribute("type", "hidden");
+        apTaxTotal.setAttribute("name", "ap_tax_total");
+        apTaxTotal.setAttribute("value", `${ap_tax_total}`);
+        //ap_products
+        const apProducts = document.createElement("input");
+        apProducts.setAttribute("type", "hidden");
+        apProducts.setAttribute("name", "ap_products");
+        apProducts.setAttribute("value", `${params.ap_products}`);
+        //submit
+        const submitButton = document.createElement("input");
+        apProducts.setAttribute("type", "submit");
+        apProducts.setAttribute("name", "submit");
+        apProducts.setAttribute("value", "Apollo Pay");
+
+        formElement.append(apType);
+        formElement.append(apCallbackURL);
+        formElement.append(apOrderSubTotal);
+        formElement.append(apTimestamp);
+        formElement.append(apMCT);
+        formElement.append(apHash);
+        formElement.append(apOrderEmail);
+        formElement.append(apCurrency);
+        formElement.append(apCurrencySymbol);
+        formElement.append(apShippingTotal);
+        formElement.append(apTaxTotal);
+        formElement.append(apProducts);
+
+        this.insertHTML("apollo_pritpal", formElement);
+        resolve({ html: true });
+      } catch (error) {
+        reject(error);
+      }
+    });
   }
 
-  const validatedParams = Object.keys(params).filter(
-    (v) => v === "merchant_key" || v === "api_key"
-  );
+  insertHTML(selector: string, html: Element) {
+    const qselector = document.querySelector(`#${selector}`);
+    // qselector?.insertAdjacentElement("beforeend", "");
+    qselector?.insertAdjacentElement("beforeend", html);
+  }
 
-  if (validatedParams.length !== 2) {
-    throw new Error("Expected Parameters are `merchant_key` and `api_key`");
+  validateArguments(params: unknown) {
+    if (typeof params !== "object" || params === null) {
+      throw new Error("Expected an Object");
+    }
+
+    const validatedParams = Object.keys(params).filter(
+      (v) => v === "merchant_key" || v === "api_key"
+    );
+
+    if (validatedParams.length !== 2) {
+      throw new Error("Expected Parameters are `merchant_key` and `api_key`");
+    }
+  }
+  generateHMAC(
+    remote_order_id: number,
+    remote_order_total: number,
+    timestamp: string
+  ) {
+    const string = `${this.credentials.merchant_key}^${remote_order_id}^${timestamp}^${remote_order_total}`;
+    // const hmac = crypto.createHmac("sha512", this.credentials.api_key);
+    // hmac.update(string);
+    // return hmac.digest("hex");
+    const hassha512 = hmacSHA512(string, this.credentials.api_key);
+    return Hex.stringify(hassha512);
+  }
+
+  getDefaultPromiseImplementation() {
+    if (typeof Promise === undefined) {
+      throw new Error(
+        "Promise is undefined. To resolve the issue, use a Promise ployfill."
+      );
+    }
+    return Promise;
   }
 }
 
-// function getDefaultPromiseImplementation() {
-//   if (typeof Promise === undefined) {
-//     throw new Error(
-//       "Promise is undefined. To resolve the issue, use a Promise ployfill."
-//     );
-//   }
-//   return Promise;
-// }
-
-export { validateCredentials, processCheckout };
+// export { LoadScript };

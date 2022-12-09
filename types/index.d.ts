@@ -3,10 +3,33 @@ import {
   ApolloPayOrderAttributes,
 } from "./script-options";
 
-export declare function validateCredentials(
-  credentials: ApolloPayCredentials
-): string;
+interface ApolloPayOptionsNamespace {
+  success: boolean;
+  message: string;
+  data: string | {};
+}
 
-export declare function processCheckout(
-  params: ApolloPayOrderAttributes
-): string;
+interface ApolloPayNamespace {
+  success?: boolean;
+  message?: string;
+  data: ApolloPayOptionsNamespace;
+  error?: string;
+}
+
+export declare class LoadScript {
+  constructor(credentials: ApolloPayCredentials);
+  public validateCredentials(): Promise<ApolloPayNamespace>;
+  public processCheckout(
+    params: ApolloPayOrderAttributes
+  ): Promise<ApolloPayNamespace>;
+}
+
+// export declare function validateCredentials(
+//   credentials: ApolloPayCredentials
+// ): Promise<ApolloPayNamespace>;
+
+// export declare function processCheckout(
+//   params: ApolloPayOrderAttributes
+// ): Promise<ApolloPayNamespace>;
+
+// export declare LoadScript(credentials: ApolloPayCredentials)
