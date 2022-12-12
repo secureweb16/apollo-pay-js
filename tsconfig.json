@@ -8,9 +8,6 @@
     "target": "es2016",
     "strict": true,
     "baseUrl": "./src",
-    "paths": {
-      "crypto": ["node_modules/crypto-browserify"]
-    },
     // these are overridden by the Rollup plugin
     "outDir": "./dist",
     "rootDir": "./"

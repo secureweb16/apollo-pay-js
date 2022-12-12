@@ -23,13 +23,3 @@ export declare class LoadScript {
     params: ApolloPayOrderAttributes
   ): Promise<ApolloPayNamespace>;
 }
-
-// export declare function validateCredentials(
-//   credentials: ApolloPayCredentials
-// ): Promise<ApolloPayNamespace>;
-
-// export declare function processCheckout(
-//   params: ApolloPayOrderAttributes
-// ): Promise<ApolloPayNamespace>;
-
-// export declare LoadScript(credentials: ApolloPayCredentials)

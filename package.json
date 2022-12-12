@@ -20,7 +20,7 @@
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "git:://github.com/"
+    "url": "git:://github.com/secureweb16/apollo-pay-js"
   },
   "devDependencies": {
     "@rollup/plugin-replace": "^5.0.1",

@@ -35,6 +35,8 @@ interface ApolloPayOrderAttributes {
   ap_tax_total: number;
   // ap_products?: ApolloPayProductAttributes[];
   ap_products: string;
+  logo?: string;
+  htmlselector: string;
 }
 
 export {

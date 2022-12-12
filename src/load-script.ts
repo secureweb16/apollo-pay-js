@@ -4,8 +4,6 @@ import {
   ApolloPayOrderAttributes,
 } from "../types/script-options";
 import { call } from "./utils";
-// import * as crypto from "crypto";
-// import * as cr from "crypto-browserify";
 import moment from "moment";
 
 import hmacSHA512 from "crypto-js/hmac-sha512";
@@ -22,8 +20,6 @@ export class LoadScript {
     if (typeof document === "undefined") return PromisePonyfill.resolve(null);
     this.validateArguments(this.credentials);
     const url = `${SDKBaseURL}/store/validate/api-key`;
-
-    console.log("type here in the package: ", this.credentials);
 
     return new PromisePonyfill(async (resolve, reject) => {
       try {
@@ -51,8 +47,6 @@ export class LoadScript {
   ) {
     if (typeof document === "undefined") return PromisePonyfill.resolve(null);
     const post_url = `${SDKBaseURL}/checkout/hosted/apollopay`;
-
-    // console.log("this.credentials:", this.credentials);
 
     return new PromisePonyfill(async (resolve, reject) => {
       try {
@@ -142,15 +136,51 @@ export class LoadScript {
         apProducts.setAttribute("name", "ap_products");
         apProducts.setAttribute("value", `${params.ap_products}`);
         //submit
-        const submitButton = document.createElement("input");
-        apProducts.setAttribute("type", "submit");
-        apProducts.setAttribute("name", "submit");
-        apProducts.setAttribute("value", "Apollo Pay");
+        const submitButton = document.createElement("button");
+        submitButton.setAttribute("type", "submit");
+        if (params.logo) {
+          const ApolloLogo = document.createElement("img");
+          ApolloLogo.setAttribute("src", `${params.logo}`);
+          ApolloLogo.setAttribute("alt", "Pay With Apollo Pay");
+          ApolloLogo.setAttribute("style", `max-width: 130px;`);
+          submitButton.setAttribute(
+            "style",
+            `background: white;
+          border: 1px solid #009de4;
+          border-radius: 5px;
+          display: flex;
+          padding: 10px 20px;
+          margin: 0px auto;
+          align-items: center;
+          text-transform: capitalize;
+          font-size: 16px;
+          flex-direction: column;
+          cursor: pointer;`
+          );
+          submitButton.append(ApolloLogo);
+        } else {
+          const ApolloText = document.createElement("span");
+          ApolloText.innerHTML = "Pay With Apollo Pay";
+          submitButton.setAttribute(
+            "style",
+            `border: none;
+          background: linear-gradient(90deg,#019de4,#00b9f6);
+          color: white;
+          padding: 10px 20px 10px;
+          font-size: 15px;
+          border-radius: 5px;
+          font-weight: 600;
+          cursor: pointer;`
+          );
+          submitButton.append(ApolloText);
+        }
 
         formElement.append(apType);
         formElement.append(apCallbackURL);
         formElement.append(apOrderSubTotal);
+        formElement.append(apOrderTotal);
         formElement.append(apTimestamp);
+        formElement.append(apOrderID);
         formElement.append(apMCT);
         formElement.append(apHash);
         formElement.append(apOrderEmail);
@@ -159,8 +189,9 @@ export class LoadScript {
         formElement.append(apShippingTotal);
         formElement.append(apTaxTotal);
         formElement.append(apProducts);
+        formElement.append(submitButton);
 
-        this.insertHTML("apollo_pritpal", formElement);
+        this.insertHTML(params.htmlselector, formElement);
         resolve({ html: true });
       } catch (error) {
         reject(error);
@@ -170,7 +201,7 @@ export class LoadScript {
 
   insertHTML(selector: string, html: Element) {
     const qselector = document.querySelector(`#${selector}`);
-    // qselector?.insertAdjacentElement("beforeend", "");
+    if (qselector !== null) qselector.innerHTML = "";
     qselector?.insertAdjacentElement("beforeend", html);
   }
 
@@ -209,5 +240,3 @@ export class LoadScript {
     return Promise;
   }
 }
-
-// export { LoadScript };
