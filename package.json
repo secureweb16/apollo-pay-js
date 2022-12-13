@@ -15,7 +15,15 @@
     "dist",
     "types"
   ],
-  "keywords": [],
+  "keywords": [
+    "apollo",
+    "apollopay",
+    "crypto",
+    "payment",
+    "hostedcheckout",
+    "secureweb",
+    "pritpal"
+  ],
   "author": "Pritpal Kaur <pritpal.secureweb@gmail.com>",
   "license": "ISC",
   "repository": {
