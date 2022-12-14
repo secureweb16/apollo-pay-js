@@ -1,4 +1,3 @@
-// import PolyPromise, { reject, resolve } from "promise-polyfill";
 import {
   ApolloPayCredentials,
   ApolloPayOrderAttributes,
@@ -31,10 +30,6 @@ export class LoadScript {
             merchantid: this.credentials.merchant_key,
           }),
         });
-
-        // if (result.data.success === true) resolve(result.data);
-        // else reject(result.data);
-
         resolve(result);
       } catch (error) {
         reject(error);
@@ -69,7 +64,7 @@ export class LoadScript {
         const apType = document.createElement("input");
         apType.setAttribute("type", "hidden");
         apType.setAttribute("name", "ap_type");
-        apType.setAttribute("value", "WooCommerce");
+        apType.setAttribute("value", "NPMFE");
         //ap_callback_url
         const apCallbackURL = document.createElement("input");
         apCallbackURL.setAttribute("type", "hidden");
@@ -192,7 +187,7 @@ export class LoadScript {
         formElement.append(submitButton);
 
         this.insertHTML(params.htmlselector, formElement);
-        resolve({ html: true });
+        resolve({ button_rendered: true });
       } catch (error) {
         reject(error);
       }

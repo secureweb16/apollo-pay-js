@@ -24,7 +24,6 @@ const call = async <response>(params: ApolloArguments): Promise<Response> => {
     //   },
     // };
     const request: RequestInit = {
-      // url: params.url,
       method: params.method,
       headers: {
         "Content-Type": "application/json",
@@ -35,14 +34,11 @@ const call = async <response>(params: ApolloArguments): Promise<Response> => {
     if (params.method.toLocaleLowerCase() === "post") {
       request["body"] = params.data;
     }
-    return await fetch(params.url, request);
+    const response = await fetch(params.url, request);
+    return response.json();
   } catch (error: any) {
     return error;
   }
 };
-
-// const processOptions = async () => {
-//   //
-// };
 
 export { call };

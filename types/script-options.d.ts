@@ -21,7 +21,6 @@ interface ApolloPayProductAttributes {
 }
 
 interface ApolloPayOrderAttributes {
-  ap_type: string;
   ap_callback_url: string;
   ap_order_sub_total: number;
   ap_order_total: number;
