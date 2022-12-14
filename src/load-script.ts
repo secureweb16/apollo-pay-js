@@ -68,7 +68,7 @@ export class LoadScript {
         const apCallbackURL = document.createElement("input");
         apCallbackURL.setAttribute("type", "hidden");
         apCallbackURL.setAttribute("name", "ap_callback_url");
-        apCallbackURL.setAttribute("value", "http://example.com/callback");
+        apCallbackURL.setAttribute("value", `${params.ap_callback_url}`);
         //ap_order_sub_total
         const apOrderSubTotal = document.createElement("input");
         apOrderSubTotal.setAttribute("type", "hidden");
