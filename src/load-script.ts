@@ -8,8 +8,7 @@ import moment from "moment";
 import hmacSHA512 from "crypto-js/hmac-sha512";
 import Hex from "crypto-js/enc-hex";
 
-// const SDKBaseURL = "http://35.183.204.94/api";
-const SDKBaseURL = "http://localhost:3007/api";
+const SDKBaseURL = "http://35.183.204.94/api";
 
 export class LoadScript {
   constructor(protected credentials: ApolloPayCredentials) {}
