@@ -28,6 +28,7 @@ const ApolloPay = async () => {
 
   const validatedResponse = AP.validateCredentials();
   if (validatedResponse.success === true) {
+    //If Credentials Validated, Then Send Payment Request
     const product = {
       name: "Test AP Usage Package",
       sku: "SKU-TEST-123",
@@ -45,7 +46,6 @@ const ApolloPay = async () => {
         tax: 0.0,
       },
     ];
-    //If Credentials Validated, Then Send Payment Request
     const checkoutResponse = AP.processCheckout({
       ap_callback_url: "http://calbback/url",
       ap_order_sub_total: 10.0,
@@ -69,4 +69,45 @@ const ApolloPay = async () => {
 };
 
 ApolloPay();
+```
+
+#### Callback Response
+
+```js
+
+The callback URL given in the process checkout request will receive following data in the POST request.
+
+{
+"ap_order_id":"YOUR_SYSTEM_ORDER_ID",
+"ap_order_total":"10.00",
+"ap_timestamp":"1671019334266",
+"ap_transaction_id":"0x7933706b5f90b4d1497e10cdb041760678cf59c46d2bdb819b68937bb84ec5cb",
+"ap_payment_status":"paid",
+"ap_hash":"36b5f7d30d86809b3e28c8da3d127ddedca251b1122e9f7861433252b72ea51ab32df342ff6982a1419070b7611b41a44abf11f7d8c367907f7edcf50db1c0fb"
+}
+
+To validate the callback for order in your system and store in the Apollo Pay
+
+const SDKBaseURL = "http://35.183.204.94/api";
+
+const getOrderHMACHash = async () => {
+  const url = `${SDKBaseURL}/checkout/generate/hmac`;
+  const {ap_order_id, ap_timestamp, ap_order_total} = req.body;
+  const response = await fetch(url, {
+    method: "post",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: {
+      merchant_id: "YOUR_MERCHANT_ID_HERE",
+      order_id: ap_order_id,
+      timestamp: ap_timestamp,
+      order_total: ap_order_total
+    }
+  });
+  if(response.success === true){
+    const calculated_hash = response.data.hmachash
+  }
+}
+
 ```

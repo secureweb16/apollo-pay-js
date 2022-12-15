@@ -218,9 +218,6 @@ export class LoadScript {
     timestamp: string
   ) {
     const string = `${this.credentials.merchant_key}^${remote_order_id}^${timestamp}^${remote_order_total}`;
-    // const hmac = crypto.createHmac("sha512", this.credentials.api_key);
-    // hmac.update(string);
-    // return hmac.digest("hex");
     const hassha512 = hmacSHA512(string, this.credentials.api_key);
     return Hex.stringify(hassha512);
   }
