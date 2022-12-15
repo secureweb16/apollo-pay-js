@@ -91,8 +91,9 @@ To validate the callback for order in your system and store in the Apollo Pay
 const SDKBaseURL = "http://35.183.204.94/api";
 
 const getOrderHMACHash = async () => {
+  let calculated_hash;
   const url = `${SDKBaseURL}/checkout/generate/hmac`;
-  const {ap_order_id, ap_timestamp, ap_order_total} = req.body;
+  const {ap_order_id, ap_timestamp, ap_order_total, ap_hash} = req.body;
   const response = await fetch(url, {
     method: "post",
     headers: {
@@ -105,8 +106,13 @@ const getOrderHMACHash = async () => {
       order_total: ap_order_total
     }
   });
-  if(response.success === true){
-    const calculated_hash = response.data.hmachash
+
+  if(response.success === true) {
+    calculated_hash = response.data.hmachash
+  }
+
+  if(calculated_hash === ap_hash) {
+    console.log("You can mark your order paid in your system");
   }
 }
 
