@@ -26,7 +26,7 @@ const ApolloPay = async () => {
     api_key: "YOUR_APOLLO_PAY_API_KEY_HERE",
   });
 
-  const validatedResponse = AP.validateCredentials();
+  const validatedResponse = await AP.validateCredentials();
   if (validatedResponse.success === true) {
     //If Credentials Validated, Then Send Payment Request
     const product = {
@@ -46,7 +46,7 @@ const ApolloPay = async () => {
         tax: 0.0,
       },
     ];
-    const checkoutResponse = AP.processCheckout({
+    const checkoutResponse = await AP.processCheckout({
       ap_callback_url: "http://calbback/url",
       ap_order_sub_total: 10.0,
       ap_order_total: 15.0,
