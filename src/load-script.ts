@@ -3,7 +3,6 @@ import {
   ApolloPayOrderAttributes,
 } from "../types/script-options";
 import { call } from "./utils";
-import moment from "moment";
 
 import hmacSHA512 from "crypto-js/hmac-sha512";
 import Hex from "crypto-js/enc-hex";
@@ -44,7 +43,7 @@ export class LoadScript {
 
     return new PromisePonyfill(async (resolve, reject) => {
       try {
-        const timestamp = moment().format();
+        const timestamp = new Date().valueOf();
 
         const ap_hash = this.generateHMAC(
           params.ap_order_id,
@@ -215,7 +214,7 @@ export class LoadScript {
   generateHMAC(
     remote_order_id: number,
     remote_order_total: number,
-    timestamp: string
+    timestamp: number
   ) {
     const string = `${this.credentials.merchant_key}^${remote_order_id}^${timestamp}^${remote_order_total}`;
     const hassha512 = hmacSHA512(string, this.credentials.api_key);
