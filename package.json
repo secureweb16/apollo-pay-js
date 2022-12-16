@@ -1,6 +1,6 @@
 {
   "name": "@apollopay/apollo-pay-js",
-  "version": "1.1.8",
+  "version": "1.1.9",
   "description": "Apollo Pay - Crypto Payments",
   "main": "index.js",
   "types": "types/index.d.ts",
