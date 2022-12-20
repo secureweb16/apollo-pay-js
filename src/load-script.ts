@@ -5,9 +5,6 @@ import {
 } from "../types/script-options";
 import { call } from "./utils";
 
-// import hmacSHA512 from "crypto-js/hmac-sha512";
-// import Hex from "crypto-js/enc-hex";
-
 const SDKBaseURL = "http://35.183.204.94/api";
 
 export class LoadScript {
@@ -44,13 +41,6 @@ export class LoadScript {
 
     return new PromisePonyfill(async (resolve, reject) => {
       try {
-        // const timestamp = new Date().toISOString();
-
-        // const ap_hash = this.generateHMAC(
-        //   params.ap_order_id,
-        //   params.ap_order_total,
-        //   timestamp
-        // );
         let ap_hash, timestamp;
 
         const url = `${SDKBaseURL}/checkout/generate/hmac`;
@@ -230,15 +220,6 @@ export class LoadScript {
       throw new Error("Expected Parameters are `merchant_key` and `api_key`");
     }
   }
-  // generateHMAC(
-  //   remote_order_id: number,
-  //   remote_order_total: number,
-  //   timestamp: string
-  // ) {
-  //   const string = `${this.credentials.merchant_key}^${remote_order_id}^${timestamp}^${remote_order_total}`;
-  //   const hassha512 = hmacSHA512(string, this.credentials.api_key);
-  //   return Hex.stringify(hassha512);
-  // }
 
   getDefaultPromiseImplementation() {
     if (typeof Promise === undefined) {
