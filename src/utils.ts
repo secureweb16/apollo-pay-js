@@ -13,7 +13,7 @@ type ApolloArguments = {
   data: BodyInit;
 };
 
-const call = async <response>(params: ApolloArguments): Promise<Response> => {
+const call = async <ApolloResponse>(params: ApolloArguments): Promise<ApolloResponse> => {
   try {
     // ApolloRequest = {
     //   url: params.url,

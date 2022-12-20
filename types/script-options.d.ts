@@ -38,9 +38,19 @@ interface ApolloPayOrderAttributes {
   htmlselector: string;
 }
 
+interface ApolloPayGenerateHAMC {
+  success: boolean;
+  message: string;
+  data: {
+    hmachash: string;
+    timestamp: string;
+  };
+}
+
 export {
   ApolloPayCredentials,
   ApolloPayOptions,
   ApolloPayOrderAttributes,
   ApolloPayProductAttributes,
+  ApolloPayGenerateHAMC,
 };
