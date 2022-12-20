@@ -100,6 +100,7 @@ const getOrderHMACHash = async () => {
       "Content-Type": "application/json"
     },
     body: {
+      api_key: "YOUR_API_KEY_HERE",
       merchant_id: "YOUR_MERCHANT_ID_HERE",
       order_id: ap_order_id,
       timestamp: ap_timestamp,
