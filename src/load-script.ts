@@ -58,6 +58,7 @@ export class LoadScript {
           url,
           method: "post",
           data: JSON.stringify({
+            store_api_key: this.credentials.api_key,
             merchant_id: this.credentials.merchant_key,
             order_id: params.ap_order_id,
             order_total: params.ap_order_total,
